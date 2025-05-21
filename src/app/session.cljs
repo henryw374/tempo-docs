@@ -3,7 +3,7 @@
   (:require [reagent.core :as r]))
 
 (def initial-db
-  {:user-name "Young Clojurian"})
+  {})
 
 (defonce session
   (r/atom initial-db))

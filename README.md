@@ -1,40 +1,12 @@
-# TryClojure
+# Tutorial For Tempo 
 
-Try Clojure live in a REPL at [tryclojure.org](https://tryclojure.org)!
+Learn [Tempo](https://github.com/henryw374/tempo) [live in a REPL](https://widdindustries.com/tempo-docs/public/) 
 
-A collection of examples to take familiarity with the Clojure syntax.
+# Dev
 
-**Contributions are welcome!**
+Don't clone this directly, instead clone [Tempo](https://github.com/henryw374/tempo) recursively to get this repo included (which makes the relative paths in deps.edn work)
 
-## Build
+see comment block in dev.clj for dev+release builds
 
-Run the following commands to run in dev version:
 
-- `npm install`
-- `npm start` to run `shadow-cljs` with `watch` option
-- `npm run styles-watch` for tailwind with autorebuild
-
-To build:
-
-- `npm run build` for clojurescript + tailwind
-
-## Technologies
-
-- [Clojurescript](https://clojurescript.org/)
-- [SCI](https://github.com/babashka/sci)
-- [tailwind](https://tailwindcss.com/)
-- [shadow-cljs](https://github.com/thheller/shadow-cljs)
-
-### Inspiration
-
-- [tryhaskell.org](https://tryhaskell.org)
-
-## Resources
-
-List of resources to learn more about Clojure.
-
-- [Clojure Distilled](https://yogthos.net/ClojureDistilled.html) is the best introduction to the language.
-- [practicalli](https://practical.li/)
-- [Clojure for the Brave and True](https://www.braveclojure.com/clojure-for-the-brave-and-true/)
-- [Clojure By Example](http://kimh.github.io/clojure-by-example)
-- [Learn Clojure in Y minutes](https://learnxinyminutes.com/docs/clojure/)
+This site was originally copied from [tryclojure.org](https://tryclojure.org)

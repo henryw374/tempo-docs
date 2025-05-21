@@ -2,7 +2,8 @@
   (:refer-clojure :exclude [time])
   (:require
    [sci.core :as sci]
-   [app.error :as error]))
+   [app.error :as error]
+   [com.widdindustries.tempo]))
 
 (clojure.core/defmacro ^:private time
   "Evaluates expr and prints the time it took. Returns the value of expr."
@@ -17,9 +18,14 @@
 (def ^:private clj-ns (sci/create-ns 'clojure.core nil))
 
 (def ^:private namespaces
-  {'clojure.core
-   {'time (sci/copy-var time clj-ns)
-    'system-time (sci/copy-var system-time clj-ns)}})
+  (let [ens (sci/create-ns 'com.widdindustries.tempo)
+        publics (ns-publics 'com.widdindustries.tempo)
+        sci-ns (update-vals publics #(sci/copy-var* % ens))
+        ]
+    {'com.widdindustries.tempo sci-ns
+     'clojure.core
+     {'time        (sci/copy-var time clj-ns)
+      'system-time (sci/copy-var system-time clj-ns)}}))
 
 ;; Default sci options
 (defonce init-opts {:classes {'js js/window :allow :all}

@@ -35,8 +35,8 @@
                        "flex"
                        "flex-col"
                        "justify-between"]}
-         [header]
-         [view]
+         ;[header]
+         [view (-> @match :parameters :query)]
          [footer]]])
      [not-found/view])])
 

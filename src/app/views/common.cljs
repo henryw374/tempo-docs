@@ -27,9 +27,9 @@
                   "text-slate-700"
                   "dark:text-white"
                   "tracking-tighter"]}
-     "Try Clojure"]]
+     "Try Tempo"]]
    [:div {:class ["flex" "flex-row" "items-center" "justify-around"]}
-    [:a {:href "https://github.com/elias94/tryclojure" :target "_blank"}
+    [:a {:href "https://github.com/henryw374/tempo" :target "_blank"}
      [:svg {:class ["text-gray-500"
                     "dark:text-white"
                     "text-opacity-50"
@@ -49,12 +49,17 @@
   [:div {:class []}
    [:p {:class ["text-sm" "text-gray-700" "dark:text-gray-500" "text-center"
                 "italic" "mb-4"]}
-    "Created with Clojurescript by "
+    "Many thanks to "
     [:a {:href "https://www.scotto.me" :target "_blank"}
      "Elia Scotto"]
-    ", thanks to " 
+    " and "
     [:a {:href "https://github.com/borkdude" :target "_blank"}
      "Michiel Borkent"]
-    " and the amazing Clojure "
-    [:a {:href "https://clojure.org/community/resources" :target "_blank"}
-     "community"] "."]])
+    " for creating  "
+    [:a {:href "https://tryclojure.org" :target "_blank"}
+     "Try Clojure"]
+    "and "
+    [:a {:href "https://github.com/babashka/sci" :target "_blank"}
+     "SCI"]
+    " respectively "
+    "."]])
