@@ -21,8 +21,7 @@ profiles.clj
 *file
 /src/gen/
 /.cpcache
-/resources/public/js/cljs-runtime/*
+/docs/public/js/cljs-runtime/*
 .DS_Store
-/docs/public/js/cljs-runtime/app.core.js
-docs/public/js/*
+/docs/public/js/manifest.edn
 /tempo-docs.iml
