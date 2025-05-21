@@ -8,21 +8,6 @@
     [app.session :as session]
     [app.tutorial :refer [tutorial]]))
 
-(def intro-title
-  "Got 5 minutes?")
-
-(def intro-content
-  "Tempo is a zero-dependency Clojure(Script) API to java.time on the JVM and <a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Temporal\">Temporal</a> on JS runtimes (like this browser)
-
- <span id=\"location-of-editor\">Here on the right</span>
-you have a **REPL**, the same as <a href=\"https://tryclojure.org\">Try Clojure</a> except that
-functions from <a href=\"https://github.com/henryw374/tempo\">Tempo</a> are included under the alias 't'
-
-Try to type some expressions as `(t/date-parse \"2020-02-02\")` or click
-on code to auto insert. You can type `(help)` for more commands.
-   
-Type `(start)` when you're ready!")
-
 (defn compute-step
   "Returns a list of `title` and `content`
   based on the current step stored into the session."
@@ -82,11 +67,14 @@ Type `(start)` when you're ready!")
                     "shadow-lg"
                     "sm:rounded-l-md"
                     "xs:rounded-t-md"
-                    "w-full"
+                    ;"w-full"
                     "md:p-8"
                     "p-6"
                     "min-h-[200px]"
                     "opacity-95"]
+         :style    {"maxWidth" "100vw"
+                    "overflow" "auto"
+                    }
          :on-click handle-tutorial-click}
    [:h1 {:class ["text-3xl" "mb-4" "font-bold" "tracking-tight"]}
     title]
@@ -100,7 +88,8 @@ Type `(start)` when you're ready!")
      :component-did-mount
      (fn []
        ;; Focus on input after first rendered
-       (repl/focus-input))
+       ;(repl/focus-input)
+       )
 
      :reagent-render
      (fn [params]
@@ -136,21 +125,22 @@ Type `(start)` when you're ready!")
 
 
 (defn view [params]
-  (r/with-let [menu-open? (r/atom true)]
-    [:div#wrapper.d-flex (when-not @menu-open? {:class "sb-sidenav-toggled"})
-     [:div#sidebar-wrapper.border-end.bg-white
-      [:div.sidebar-heading.border-bottom.bg-light
-       [:span "Tempo docs"
-        ;[:button.navbar-toggler {:type "button" :data-bs-toggle "collapse" :data-bs-target "#navbarSupportedContent" :aria-controls "navbarSupportedContent" :aria-expanded "false" :aria-label "Toggle navigation"} [:span.navbar-toggler-icon]]
-        ]]
-
-      [:div.list-group.list-group-flush
-       (->> tutorial
-            (map (fn [{:keys [title]}]
-                   ^{:key title}
-                   [:a.list-group-item.list-group-item-action.list-group-item-light.p-3 
-                    {:href (rfe/href :index {} {:step title} )} title])))
-       ]]
+  (r/with-let [menu-open? (r/atom false)]
+    [:div#wrapper.d-flex ;(when-not @menu-open? {:class "sb-sidenav-toggled"})
+     ;{:class "sb-sidenav-toggled"}
+     (when @menu-open?
+       [:div#sidebar-wrapper.border-end.bg-white
+        [:div.sidebar-heading.border-bottom.bg-light
+         [:span "Tempo docs"]]
+        [:div.list-group.list-group-flush
+         (->> tutorial
+              (map (fn [{:keys [title]}]
+                     ^{:key title}
+                     [:a.list-group-item.list-group-item-action.list-group-item-light.p-3
+                      {
+                       :on-click (fn [] (reset! menu-open? false)
+                                   (rfe/push-state :index {} {:step title})
+                                   )} title])))]])
      [:div#page-content-wrapper
       [:nav.navbar.navbar-expand-lg.navbar-light.bg-light.border-bottom
        [:div.container-fluid

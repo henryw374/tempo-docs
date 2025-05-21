@@ -6,7 +6,18 @@
 
 (def tutorial
   "Collection of map steps."
-  [{:title "Entities & Naming"
+  [{:title "Introduction to Tempo"
+    :content "Tempo is a zero-dependency Clojure(Script) API to java.time on the JVM and <a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Temporal\">Temporal</a> on JS runtimes (like this browser)
+
+ <span id=\"location-of-editor\">Here on the right</span>
+you have a **REPL**, the same as <a href=\"https://tryclojure.org\">Try Clojure</a> except that
+functions from <a href=\"https://github.com/henryw374/tempo\">Tempo</a> are included under the alias 't'
+
+Try to type some expressions as `(t/date-parse \"2020-02-02\")` or click
+on code to auto insert. You can type `(help)` for more commands.
+   
+"}
+   {:title "Entities & Naming"
     :content "
 <img src=\"https://tc39.es/proposal-temporal/docs/object-model.svg\"/>
 

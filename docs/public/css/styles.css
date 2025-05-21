@@ -10826,6 +10826,7 @@ textarea.form-control-lg {
 }
 #wrapper {
   overflow-x: hidden;
+  overflow: hidden;
 }
 
 #sidebar-wrapper {
@@ -10851,7 +10852,7 @@ textarea.form-control-lg {
   margin-left: 0;
 }
 
-@media (min-width: 768px) {
+/*@media (min-width: 768px) {*/
   #sidebar-wrapper {
     margin-left: 0;
   }
@@ -10862,4 +10863,4 @@ textarea.form-control-lg {
   #wrapper.sb-sidenav-toggled #sidebar-wrapper {
     margin-left: -15rem;
   }
-}
+/*}*/

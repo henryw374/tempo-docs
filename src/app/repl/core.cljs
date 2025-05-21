@@ -63,11 +63,7 @@
   []
   (let [help-str ["Helper functions:"
                   ""
-                  "start     - Starts the tutorial"
-                  "restart   - Restarts the tutorial"
                   "clear     - Clears the entire REPL"
-                  "next-step - Jumps to the next step"
-                  "prev-step - Jumps to the previous step"
                   ""
                   "Use (doc name) for print the documentation of a function or a var given its name."
                   ""
