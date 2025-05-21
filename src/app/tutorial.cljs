@@ -4,10 +4,11 @@
    [sci.lang :refer [Var]]
    [com.widdindustries.tempo :as t]))
 
-(def tutorial
+(def tutorial*
   "Collection of map steps."
   [{:title "Introduction to Tempo"
-    :content "Tempo is a zero-dependency Clojure(Script) API to java.time on the JVM and <a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Temporal\">Temporal</a> on JS runtimes (like this browser)
+    :content "Tempo is a zero-dependency Clojure(Script) API to <a href=\"https://docs.oracle.com/javase/tutorial/datetime/iso/overview.html\">java.time</a> 
+    on the JVM and <a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Temporal\">Temporal</a> on JS runtimes (like this browser)
 
  <span id=\"location-of-editor\">Here on the right</span>
 you have a **REPL**, the same as <a href=\"https://tryclojure.org\">Try Clojure</a> except that
@@ -33,8 +34,6 @@ ZonedDateTime is called 'zdt' to keep it short.
 js/Date and java.util.Date are called 'legacydate'
 
 Otherwise, the naming of entities in Tempo should mostly be self-explanatory.
-
-Please move on by clicking `(next-step)`
     "
     ;:test (constantly true)
     }
@@ -90,8 +89,6 @@ to get parts of an entity, the function name will start with the type of the ent
 `(t/epochmilli->instant 123)`
 
 `(t/legacydate->instant (js/Date.))`
-
-Please move on by clicking `(next-step)` or go back with `(prev-step)`
     "}
    ;; Clocks
    {:title "Reified Clocks"
@@ -121,8 +118,6 @@ create a mutable, non-ticking clock - simply change the value in the atom as req
 `(def clock (t/clock-zdt-atom zdt-atom))`
 
 To use a clock, pass it to a -now function. for example `(t/date-now clock)`
-  
-  Please move on by clicking `(next-step)` or go back with `(prev-step)`
   "
     ;:test (constantly true)
     }
@@ -170,184 +165,27 @@ move date to prev-or-same sunday
    "}
    
    {:title "Weekdays and Months" 
-    :content "
-    As you may have noticed, weekdays and months are not reified entities in Tempo (same as Temporal)
+    :content "As you may have noticed, weekdays and months are not reified entities in Tempo (same as Temporal)
     
-    Weekdays are represented by numbers 1-7, with Monday being 1.
-    
-    Months are represented by numbers 1-12, with January being 1.
-    
-    However, to avoid magical numbers, Tempo provides vars that provide suitable names for these
-   
-   `(get t/weekday-name->weekday t/weekday-tuesday)`
+Weekdays are represented by numbers 1-7, with Monday being 1.
+
+Months are represented by numbers 1-12, with January being 1.
+
+However, to avoid magical numbers, Tempo provides vars that provide suitable names for these
+
+`(->> t/weekday-tuesday (get t/weekday->weekday-name))`
+
+and if you need to know the 
+
+`(->> t/weekday-tuesday-name (get t/weekday-name->weekday))`
    
    "}
    {:title "" :content ""}
   
   ])
 
-#_ [ {:title "Math is (fun)"
-      :content
-      "In Clojure mathematical operators are like normal functions. 
-       As you already know, you have to include them in parentheses `(...)`.
-    
-    So instead of `4 + 2` you will do `(+ 4 2)`. Try to type a numerical operation with `+-/*`."
-      :test #(number? %)}
-    ;; Functions
-    {:title "Clojure is functional"
-     :content
-     "> Lisp is functional. And the future is looking very functional to me. - Robert C. Martin
-   
-   The first argument of a list needs to be a **function**. The *rest*, 
-      are the arguments to that function. In the expression `(not true)`,
-      *not* is the negation function and *true* is the argument. 
-      
-   Try to use the function `(my-name)` followed by your name as a \"string\", as `(my-name \"Elia\")`."
-     :test #(and (map? %) (contains? % :user-name) (string? (:user-name %)))}
-    ;; Keywords
-    {:title "Don't forget the keys"
-     :content
-     "> These days, the problem isn't how to innovate; it's how to get society to adopt the good ideas that already exist. - Douglas Engelbart
-      
-   Hi there, **[[user-name]]**! Nice to meet you.
-     
-   In the REPL you are getting back the evaluation of the expression that you typed.
-     As you can see, `:user-name` is in a special form; it's called a *keyword*.
-     You have to prepend `:` to a word to create one. 
-      
-   Use the keyword `:next` to continue."
-     :test #(= % :next)}
-    ;; Exercise - 01
-    {:title "A function for everything"
-     :content
-     "Let's tweak our interface!
-      
-   You already know how to invoke functions, how to use keywords and strings.
-      What if I tell you that you can change the prompt?
- 
-   You can call functions with keywords parameters, as `(create-dog :name \"Zeus\" :breed \"Beagle\")`
-      
-   Use the function `(set-prompt)` and set a color. It accepts optionally `:color` and `:text` as strings. 
-      Or click on `(set-prompt :color \"red\")`"
-     :test #(contains? % :prompt-color)}
-    ;; 
-    {:title "Functional practicioner!"
-     :content
-     "Congratulations, you have called a function and changed the state of the application! 
-      And the entire command was… a list!
-                                                                                      
-   Clojure offers multiple functions to work with lists, such as `reverse`. It reverses a collection.
-      So if you pass a string, it will use it as a collection of characters.
-      
-   Type `(reverse \"a-long-string\")` to advance at the next step."
-     :test #(= % (reverse "a-long-string"))}
-    ;; Vectors
-    {:title "We have vectors"
-     :content
-     "> Lisp is worth learning for the profound enlightenment experience you will have when you finally get it. - Eric Raymond
-      
-   **Vectors** (aka arrays) contain sequential elements and they have a faster access compared to lists.
-      
-   To create a vector you need to include the items into squared brackets `[]` without any separator.
-      
-   Create a vector of elements, like your favorite names for cats `[\"luna\" \"milu\" \"boris\"]`. "
-     :test #(vector? %)}
-    ;; Variables
-    {:title "Def your variables"
-     :content
-     "> Good programmers don't just write programs. They build a working vocabulary. - Guy Steele
-                                                                                      
-   **Global** variables are defined using `def`. Their value could be anything.
-      
-   Create a global variable called `foo` with a value. E.g. `(def foo \"bar\")`"
-     :test #(and (instance? Var %) (= "foo" (-> (.-meta %) :name str)))}
-    ;; Let
-    {:title "Let it be local"
-     :content
-     "> Lisp is so great not because of some magic quality visible only to devotees, but because it is simply the most powerful language available. - Paul Graham
-      
-   **Local** variables could be defined using `let`. They will be available only
-      inside the lexical context of the `let`. In the expression `(let [x 1] x)`
-      you can refer to x only inside the `body` part delimited by `()`.
-      
-   Create numeric variables and multiply them like `(let [a 2 b 3] (* a b))`."
-     :test #(number? %)}
-    ;; Maps
-    {:title "Maps are dictionaries"
-     :content
-     "> Any fool can write code that a computer can understand. Good programmers write code that humans can understand. - Martin Fowler
-      
-   Maps are collections that map *keys* to *values*. They're wrapped into `{}`. 
-      You can use everything as a key but Clojure programmers mostly use keywords.
-      
-   Create a map with a key `:country` and your country as a string. 
-      Like `{:country \"Australia\"}`."
-     :test #(and (map? %) (contains? % :country) (string? (:country %)))}
-    ;; F-list
-    {:title "First of list"
-     :content
-     "Clojure offers some functions to extract content from the list. For example, 
-      `first` returns the first element.
-      
-   Type `(first '(\"alpha\" \"bravo\" \"charlie\"))` to get the first element."
-     :test #(and (string? %) (= "alpha" %))}
-    ;; Range
-    {:title "Range of N"
-     :content
-     "The Clojure function `range` creates a list of numbers from 0 to `n` (excluded). 
-      So `(range 5)` will return numbers from 0 to 4. Use `(doc range)` to print
-     the documentation. 
-      
-   Create a range from 0 to 99 or click on `(range 100)` :)."
-     :test #(= % (range 100))}
-    ;; Filter
-    {:title "Filter a list"
-     :content
-     "We can apply functions to a list. For example, using `filter` we can remove
-      all the elements that are not respecting our condition.
-      
-   Try to remove all the *even* numbers from 0 to 50. Psst, `(filter odd? (range 50))`"
-     :test #(= % (filter odd? (range 50)))}
-    ;; Map
-    {:title "Apply functions on lists"
-     :content
-     "If we want a list of multiples of 11 less than 100, the process to find them
-      is to take each number from 1 to 9, multiply it by 10 and add it to the number, as
-      `5 * 10 + 5 = 55`. We can do the same thing with Clojure using `map`.
- 
-   `map` simply applies a function to every element of a list. 
-      
-   So use `(map (fn [n] (+ n (* n 10))) (range 1 10))` to do it."
-     :test #(= % (map (fn [n] (+ n (* n 10))) (range 1 10)))}
-    ;; Inline functions
-    {:title "Inline functions"
-     :content
-     "In the previous step, we wrote an inline function and passed it as argument
-      to `map`. I'm referring to `(fn [n] (+ n (* n 10)))`. This technique is useful to create
-      functions as *generic utilities* and not write them for a specific use case.
-      
-  Now create a function that takes `l` and `b` and returns the perimeter of a rectangle:
-      
-  `(fn [l b] (* (+ l b) 2))`."
-     :test #(= (apply % [2 3]) 10)}
-    ;; REPL
-    {:title "REPL driven development"
-     :content
-     "> The only way to learn a new programming language is by writing programs in it. - Kernighan and Ritchie
-      
-   You’re currently solving a list of problems by typing code into the REPL and testing it. 
-      That’s exactly what a Clojurist does! It's faster to test your code while typing than compiling and debugging it later!
-      
-   But Clojure is much more than this. Type `(more)` to go to the last step."
-     :test #(true? %)}
-    {:title "It's time to learn Clojure!"
-     :content
-     "> In the beginner’s mind there are many possibilities, but in the expert’s there are few - Zen Mind, Beginner's Mind
-      
-  Clojure is **not** as difficult as it seems. Parentheses, functions, immutable data structures and the REPL
-      will become your friends. Just keep a beginner's mind!
-      
-  Some good resources to start are [Clojure koans](http://clojurekoans.com/), [4Clojure](https://4clojure.oxal.org/) or [exercism](https://exercism.org/tracks/clojure).
 
-  Ask the community for support, and good luck!"
-     :test #(true? false)}]
+(def tutorial 
+  (->> tutorial* 
+       (into [] (map-indexed (fn [idx item]
+                               (assoc item :index idx))))))
