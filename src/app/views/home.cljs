@@ -8,15 +8,17 @@
     [app.session :as session]
     [app.tutorial :refer [tutorial]]))
 
+(defn step-data [step]
+  (->> tutorial
+       (some (fn [{:keys [title] :as step-data}]
+               (and (= title step) step-data)))))
+
 (defn compute-step
   "Returns a list of `title` and `content`
   based on the current step stored into the session."
   [{:keys [step]}]
-  (let [step-data (or (some (fn [{:keys [title] :as step-data}]
-                              (and (= title step) step-data)) tutorial)
-                    (nth tutorial 0))]
-    
-    [(:title step-data) (:content step-data)]))
+  (or (step-data step)
+    (nth tutorial 0)))
 
 (defn- link-target
   "Add target=_blank to link in markdown."
@@ -59,7 +61,7 @@
            (reset! repl/repl-input))
       (repl/focus-input))))
 
-(defn tutorial-view [[title content]]
+(defn tutorial-view [{:keys [title content index]}]
   [:div {:class    ["bg-gray-200"
                     "text-black"
                     "dark:text-white"
@@ -77,9 +79,20 @@
                     }
          :on-click handle-tutorial-click}
    [:h1 {:class ["text-3xl" "mb-4" "font-bold" "tracking-tight"]}
-    title]
+    (str (inc index) ". " title)]
    [:div {:class                   ["leading-relaxed" "last:pb-0"]
-          :dangerouslySetInnerHTML #js{:__html (parse-md content)}}]])
+          :dangerouslySetInnerHTML #js{:__html (parse-md content)}}]
+   [:div
+    (when (pos? index)
+      [:button#sidebarToggle.btn.btn-primary
+       {:on-click #(rfe/push-state :index {} {:step (-> tutorial
+                                                  (get (dec index)) :title)})
+        :style    {:margin-right "1em"}} "Previous"])
+    (when (< (inc index) (count tutorial))
+      [:button#sidebarToggle.btn.btn-primary
+       {:on-click #(rfe/push-state :index {} {:step (-> tutorial
+                                                  (get (inc index)) :title)})} "Next"])
+    ]])
 
 (defn content-view [_params]
   (r/create-class
@@ -134,13 +147,13 @@
          [:span "Tempo docs"]]
         [:div.list-group.list-group-flush
          (->> tutorial
-              (map (fn [{:keys [title]}]
+              (map (fn [{:keys [title index]}]
                      ^{:key title}
                      [:a.list-group-item.list-group-item-action.list-group-item-light.p-3
                       {
                        :on-click (fn [] (reset! menu-open? false)
                                    (rfe/push-state :index {} {:step title})
-                                   )} title])))]])
+                                   )} (str (inc index) ". " title)])))]])
      [:div#page-content-wrapper
       [:nav.navbar.navbar-expand-lg.navbar-light.bg-light.border-bottom
        [:div.container-fluid
