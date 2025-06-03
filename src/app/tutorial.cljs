@@ -3,14 +3,17 @@
 (def tutorial*
   "Collection of map steps."
   [{:title "Introduction to Tempo"
-    :content "<a href=\"https://github.com/henryw374/tempo\">Tempo</a> is a zero-dependency Clojure(Script) API to <a href=\"https://docs.oracle.com/javase/tutorial/datetime/iso/overview.html\">java.time</a> 
+    :content "Tempo is a zero-dependency Clojure(Script) API to <a href=\"https://docs.oracle.com/javase/tutorial/datetime/iso/overview.html\">java.time</a> 
     on the JVM and <a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Temporal\">Temporal</a> on JS runtimes (like this browser)
+    
+To find out the rationale for this library and how to install it, visit the <a href=\"https://github.com/henryw374/tempo\">README</a>    
 
+This is an interactive tutorial for Tempo. Jump to a section using the left-side nav or see the <a href=\"/all\">Full listing</a> to search in page for anything in particular.
  <span id=\"location-of-editor\">Here on the right</span>
 you have a **REPL**.
 Functions from the main tempo ns are included under the alias 't'
 
-Click on this expression: `(t/date-parse \"2020-02-02\")` to auto insert, or type into the REPL directly. 
+For example, click on this expression: `(t/date-parse \"2020-02-02\")` to auto insert, or type into the REPL directly. 
 
 You can type `(help)` for more commands.
    
@@ -28,6 +31,8 @@ so e.g. PlainDate/LocalDate are just `date`
 
 as in `(t/date? (t/date-parse \"2020-02-02\"))`.
 
+Multi-part entities, such `datetime` or `yearmonth` have no separator in the name and all names are lower case.
+
 ZonedDateTime is called 'zdt' to keep it short. 
     
 js/Date and java.util.Date are called 'legacydate'
@@ -38,9 +43,8 @@ Otherwise, the naming of entities in `Tempo` should mostly be self-explanatory.
     }
    {:title "Construction and Access"
     :content "
-The naming of construction and access functions is based on mnemonics
-
-The first word in the function is the entity name of the subject of the operation
+The naming of construction and access functions is based on mnemonics: The first word in the function is the entity name of the subject of the operation and
+the second word (after the hyphen) is the operation, so IOW <i>t/entity-operation</i>
 
 `(t/date-now clock)`
 
@@ -75,7 +79,7 @@ One can 'add' a field to an object to create a different type.
 
 `(t/yearmonth+day-at-end-of-month (t/yearmonth-parse \"2020-02\"))` ; => a date
 
-`(t/datetime+timezone_id (t/datetime-parse \"2020-02-02T02:02\") \"Pacific/Honolulu\")` 
+`(t/datetime+timezone (t/datetime-parse \"2020-02-02T02:02\") \"Pacific/Honolulu\")` 
 
 To get a part of an entity, the function name will start with the type of the entity, followed by `->` then 
 the target type. For example:
@@ -93,7 +97,7 @@ the target type. For example:
 `(t/legacydate->instant (js/Date.))`
     "}
    ;; Clocks
-   {:title "Reified Clocks"
+   {:title "Clocks"
     :content
     "> Best practice for applications is to pass a Clock into any method that requires the current instant. 
 - from the Javadoc of java.time.InstantSource
@@ -108,7 +112,7 @@ Create a Clock that is will return the current browser's time in the current tim
   `(def clock (t/clock-system-default-zone))` or ...
   
 A ticking clock in specified place
-`(def clock (t/clock-with-timezone_id \"Pacific/Honolulu\"))`
+`(def clock (t/clock-with-timezone \"Pacific/Honolulu\"))`
 
  A clock fixed in time and place
 `(def clock (t/clock-fixed (t/instant-parse \"2020-02-02T00:00:00Z\") \"Europe/Paris\"))`
@@ -128,7 +132,10 @@ mutable, non-ticking clock - simply change the value in the atom as required
 
 `(def clock-zdt-atom (t/clock-zdt-atom zdt-atom))` 
 
-if you have other requirements for a clock, it is easy to create your own(t/clock  (fn get-instant [] do-whatever)  (fn get-zone [] do-whatever))
+if you have other requirements for a clock, it is easy to create your own implementation
+
+`(t/clock  (fn get-instant [] do-whatever)  (fn get-zone [] do-whatever))`
+
   "
     ;:test (constantly true)
     }
@@ -186,45 +193,92 @@ However, to avoid magical numbers, Tempo provides vars that provide suitable nam
 
 `(->> t/weekday-tuesday (get t/weekday->weekday-name))`
 
-and if you need to know the 
+and if you need to know the number of a named day or month, a reverse lookup is available 
 
 `(->> t/weekday-tuesday-name (get t/weekday-name->weekday))`
    
    "}
    {:title "Time zones" :content "
-(t/timezone_id-now clock)
-```
+
+`(t/timezone-now clock)`
 
 Timezone identifiers in `tempo` are just strings.
 
-(t/zdt->timezone_id zdt)
-(t/zdt-from {:datetime datetime :timezone_id timezone_id})
+(t/zdt->timezone zdt)
+(t/zdt-from {:datetime datetime :timezone timezone})
 
    
    "}
-   {:title "Properties"
-    :content "
-    
-\n\nVars such as `t/hours-property` exist in Tempo. These combine the concept of `units` and `fields`, so for example\n\n```clojure\n(t/until x y t/days-property) ; how much time in unit days\n(t/with x 11 t/days-property) ; set the day of month field to 11\n```\n\nCombining the concept of unit and field is a simplification. In some cases it may be an over-simplification, for example `t/days-property` corresponds to the `day of month` field, so if `day of year` was required a new property would have to be created in user space. \n\nHowever, as per the stated aim of Tempo to just cover everyday use cases, hopefully the property concept has sufficient benefit to outweigh the cost. \n    "
-    }
-   {:title "Manipulation" :content "
    
-aka construction a new temporal from one of the same type\n\n```clojure\n\n;; move date forward 3 days\n(t/>> a-date 3 t/days-property)\n;; move forward by some amount\n(t/>> a-date a-temporal-amount)\n\n(t/date-next-or-same-weekday a-date 2) ; move date to next-or-same tuesday\n(t/date-prev-or-same-weekday a-date 7) ; move date to prev-or-same sunday\n\n;; set a particular field\n(t/with a-yearmonth 3030 t/years-property)\n\n; set fields smaller than days (ie hours, mins etc) to zero\n(t/truncate x t/days-property)\n\n```\n
-   "}
    {:title "Guardrails" :content "
-Consider the following:\n\n```clojure\n(let [start (t/date-parse \"2020-01-31\")]\n  (-> start \n      (t/>> 1 t/months-property)\n      (t/<< 1 t/months-property)))\n```\n\nIf you shift a date forward by an amount, then back by the same amount then one might think that the output would be equal to the\ninput. In some cases that would happen, but not in the case shown above.\n\nHere's a similar example:\n\n```clojure\n(let [start (t/date-parse \"2020-02-29\")]\n  (-> start\n      (t/with 2021 t/years-property)\n      (t/with 2020 t/years-property)))\n```\n\nWe increment the year, then decrement it, but the output is not the same as the input.\n\nBoth java.time and Temporal work this way and in my experience it is a source of bugs. For this reason, shifting `>>/<<`\nand `with` do not work in Tempo if the property is years or months and the subject is not a year-month.\n\nAs a safer alternative, I suggest getting the year-month from a temporal first, doing whatever with/shift operations you\nlike then setting the remaining fields.\n\nIf you do not wish to have this guardrail, set `t/*block-non-commutative-operations*` to false\n   
+Consider the following:
+
+
+`(let [start (t/date-parse \"2020-01-31\")] (-> start (t/>> 1 t/months-property) (t/<< 1 t/months-property)))`
+
+If you shift a date forward by an amount, then back by the same amount then one might think that the output would be equal to the
+input. In some cases that would happen, but not in the case shown above.
+
+Here's a similar example:
+
+`(let [start (t/date-parse \"2020-02-29\")] (-> start (t/with 2021 t/years-property) (t/with 2020 t/years-property)))`
+
+We increment the year, then decrement it, but the output is not the same as the input.
+
+Both java.time and Temporal work this way and in my experience it is a source of bugs. For this reason, shifting `>>/<<`
+and `with` do not work in Tempo if the property is years or months and the subject is not a year-month.
+
+As a safer alternative, I suggest getting the year-month from a temporal first, doing whatever with/shift operations you
+like then setting the remaining fields.
+
+If you do not wish to have this guardrail, set `t/*block-non-commutative-operations*` to false
+   
    "}
    {:title "Comparison" :content "
-only entities of the same type can be compared\n\n(t/>= a b)\n\n(t/max a b c)\n\n; you must specify property\n(t/until a b t/minutes-property)\n\n```\n   
+
+Entities of the same type can be compared
+
+`(t/>= a b)`
+
+`(t/max a b c)`
+
+`(t/until a b t/minutes-property)`
+
+```
+   
    "}
    {:title "Predicates" :content "
-(t/date? x)   
+`(t/date? x)`   
    "}
    {:title "Temporal-amounts" :content "
-   A temporal-amount is an entity representing a quantity of time, e.g. 3 hours and 5 seconds.\n\nTemporal-Amount entities are represented differently in java.time vs Temporal, but with some overlap.\n\nAn `alpha` ns (groan!) exists which contains a few functions for working with temporal-amounts.\n\nIf not sufficient, use reader conditionals in your code to construct/manipulate as appropriate.\n\n```clojure\n\n(require '[com.widdindustries.tempo.duration-alpha :as d])\n\n(d/duration-parse \"PT0.001S\")\n\n```\n
+   A temporal-amount is an entity representing a quantity of time, e.g. 3 hours and 5 seconds.
+
+Temporal-Amount entities are represented differently in java.time vs Temporal, but with some overlap.
+
+An `alpha` ns (groan!) exists which contains a few functions for working with temporal-amounts.
+
+If not sufficient, use reader conditionals in your code to construct/manipulate as appropriate.
+
+`(require '[com.widdindustries.tempo.duration-alpha :as d])`
+
+`(d/duration-parse \"PT0.001S\")`
+
+
    "}
    {:title "Formatting" :content "
-* formatting non-iso strings is not a feature in Tempo   "}
+formatting (and parsing) non-iso strings is not a feature in Tempo, because there is no suitable underlying
+API in Temporal.
+
+On the jvm, the in-built java.time.format.DateTimeFormatter is the most obvious choice.
+
+In js runtimes, there is no in-built alternative for parsing. For printing, look at <a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat\">Intl.DateTimeFormat</a>. 
+
+Non-iso date parsing libraries might be an option but beware they
+can involve hefty payloads if they contain localization data.
+
+Alternatively, consider a regex to get the constituent parts of the string, then using those in Tempo's `-from` functions.
+
+"}
   
   ])
 
