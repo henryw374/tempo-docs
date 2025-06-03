@@ -7360,7 +7360,7 @@ textarea.form-control-lg {
   flex-wrap: wrap !important;
 }
 
-.flex-nowrap {
+.flex-derefrap {
   flex-wrap: nowrap !important;
 }
 
@@ -8022,7 +8022,7 @@ textarea.form-control-lg {
   white-space: normal !important;
 }
 
-.text-nowrap {
+.text-derefrap {
   white-space: nowrap !important;
 }
 
@@ -8368,7 +8368,7 @@ textarea.form-control-lg {
   .flex-sm-wrap {
     flex-wrap: wrap !important;
   }
-  .flex-sm-nowrap {
+  .flex-sm-derefrap {
     flex-wrap: nowrap !important;
   }
   .flex-sm-wrap-reverse {
@@ -8864,7 +8864,7 @@ textarea.form-control-lg {
   .flex-md-wrap {
     flex-wrap: wrap !important;
   }
-  .flex-md-nowrap {
+  .flex-md-derefrap {
     flex-wrap: nowrap !important;
   }
   .flex-md-wrap-reverse {
@@ -9360,7 +9360,7 @@ textarea.form-control-lg {
   .flex-lg-wrap {
     flex-wrap: wrap !important;
   }
-  .flex-lg-nowrap {
+  .flex-lg-derefrap {
     flex-wrap: nowrap !important;
   }
   .flex-lg-wrap-reverse {
@@ -9856,7 +9856,7 @@ textarea.form-control-lg {
   .flex-xl-wrap {
     flex-wrap: wrap !important;
   }
-  .flex-xl-nowrap {
+  .flex-xl-derefrap {
     flex-wrap: nowrap !important;
   }
   .flex-xl-wrap-reverse {
@@ -10352,7 +10352,7 @@ textarea.form-control-lg {
   .flex-xxl-wrap {
     flex-wrap: wrap !important;
   }
-  .flex-xxl-nowrap {
+  .flex-xxl-derefrap {
     flex-wrap: nowrap !important;
   }
   .flex-xxl-wrap-reverse {

@@ -46,11 +46,11 @@ Otherwise, the naming of entities in `Tempo` should mostly be self-explanatory.
 The naming of construction and access functions is based on mnemonics: The first word in the function is the entity name of the subject of the operation and
 the second word (after the hyphen) is the operation, so IOW <i>t/entity-operation</i>
 
-`(t/date-now clock)`
+`(t/date-deref clock)`
 
 `(t/date-parse \"2020-02-02\")` ;iso strings only
 
-`(t/zdt-now clock)`
+`(t/zdt-deref clock)`
 
 `(t/zdt-parse \"2024-02-22T00:00:00Z[Europe/London]\")` ;iso strings only
 
@@ -61,17 +61,17 @@ As well as parsing, one can build from parts
 
  the `-from` functions accept a map of components which must be sufficient to build the entity
 
-`(t/datetime-from {:date (t/date-parse \"2020-02-02\") :time (t/time-now clock)})`
+`(t/datetime-from {:date (t/date-parse \"2020-02-02\") :time (t/time-deref clock)})`
 
 or equivalently
 
-`(t/datetime-from {:year 2020 :month 2 :day-of-month 2 :time (t/time-now clock)})`
+`(t/datetime-from {:year 2020 :month 2 :day-of-month 2 :time (t/time-deref clock)})`
 
 with `-from`, you can use smaller or larger components (size here is referring to number of fields). 
 
 Larger entities take precedence. Below, the `:year` is ignored, because the `:date` took precedence (being larger) 
 
-`(t/datetime-from {:year 2021 :date (t/date-parse \"2020-02-02\") :time (t/time-now clock)})`
+`(t/datetime-from {:year 2021 :date (t/date-parse \"2020-02-02\") :time (t/time-deref clock)})`
 
 One can 'add' a field to an object to create a different type. 
 
@@ -90,7 +90,7 @@ the target type. For example:
 
 `(t/zdt->nanosecond (t/zdt-parse \"2024-02-22T00:00:00.1Z[Europe/London]\"))`
 
-`(t/instant->epochmilli (t/instant-now clock))`
+`(t/instant->epochmilli (t/instant-deref clock))`
 
 `(t/epochmilli->instant 123)`
 
@@ -101,12 +101,11 @@ the target type. For example:
     :content
     "> Best practice for applications is to pass a Clock into any method that requires the current instant. 
 - from the Javadoc of java.time.InstantSource
-    
-A Clock is something you can use to ask questions like 'what is your current time?' 
-    and 'what timezone are you in?'
-    
+        
 In both java.time and Temporal it is possible to use the ambient Clock by calling a zero-arity 'now' function, 
-for example `(js/Temporal.Now.instant)`, but this impedes testing and so has no equivalent in Tempo.    
+for example `(js/Temporal.Now.instant)`, but this impedes testing and so has no equivalent in Tempo.
+
+Naming-wise, Tempo makes an analogy with clojure's atoms, so when you get the current value from a clock the function name is <i>subject</i>-deref
     
 Create a Clock that is will return the current browser's time in the current timezone with 
   `(def clock (t/clock-system-default-zone))` or ...
@@ -124,7 +123,7 @@ Create a mutable, non-ticking clock - simply change the value in the atom as req
 `(def zdt-atom (atom (t/zdt-parse \"2024-02-22T00:00:00Z[Europe/London]\")))`
 `(def clock (t/clock-zdt-atom zdt-atom))`
 
-To use a clock, pass it to a '-now' function. for example `(t/date-now clock)`
+To use a clock, pass it to a '-deref' function. for example `(t/date-deref clock)`
 
 mutable, non-ticking clock - simply change the value in the atom as required
 
@@ -145,7 +144,7 @@ Vars such as `t/hours-property` exist in Tempo. These combine the concepts (from
 so for example
 
 `(t/until x y t/days-property)` ; how much time in unit days?
-`(t/with (t/date-now clock) 11 t/days-property)` ; set the day of month field to 11
+`(t/with (t/date-deref clock) 11 t/days-property)` ; set the day of month field to 11
 
 Combining the concept of unit and field is a simplification. 
 
@@ -162,23 +161,23 @@ Manipulation: aka construction a new temporal from one of the same type
 
 move date forward 3 days
 
-`(t/>> (t/date-now clock) 3 t/days-property)`
+`(t/>> (t/date-deref clock) 3 t/days-property)`
 
 move forward by some amount
 
 `(t/>> a-date a-temporal-amount)`
 
  move date to next-or-same tuesday
-`(t/date-next-or-same-weekday (t/date-now clock) 2)`
+`(t/date-next-or-same-weekday (t/date-deref clock) 2)`
 
 move date to prev-or-same sunday
-`(t/date-prev-or-same-weekday (t/date-now clock) 7)` 
+`(t/date-prev-or-same-weekday (t/date-deref clock) 7)` 
 
 ;; set a particular field
-`(t/with (t/yearmonth-now clock) 3030 t/years-property)`
+`(t/with (t/yearmonth-deref clock) 3030 t/years-property)`
 
 ; set fields smaller than days (ie hours, mins etc) to zero
-`(t/truncate (t/instant-now clock) t/hours-property)`
+`(t/truncate (t/instant-deref clock) t/hours-property)`
 
    "}
    
@@ -200,7 +199,7 @@ and if you need to know the number of a named day or month, a reverse lookup is 
    "}
    {:title "Time zones" :content "
 
-`(t/timezone-now clock)`
+`(t/timezone-deref clock)`
 
 Timezone identifiers in `tempo` are just strings.
 
