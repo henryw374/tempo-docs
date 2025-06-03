@@ -37,7 +37,7 @@ ZonedDateTime is called 'zdt' to keep it short.
     
 js/Date and java.util.Date are called 'legacydate'
 
-Otherwise, the naming of entities in `Tempo` should mostly be self-explanatory.
+Otherwise, the naming of entities in 'Tempo' should be self-explanatory.
     "
     ;:test (constantly true)
     }
@@ -99,9 +99,10 @@ the target type. For example:
 - from the Javadoc of java.time.InstantSource
         
 In both java.time and Temporal it is possible to use the ambient Clock by calling a zero-arity 'now' function, 
-for example `(js/Temporal.Now.instant)`, but this impedes testing and so has no equivalent in Tempo.
+for example `(js/Temporal.Now.instant)`, but this impedes testing so has no equivalent in Tempo.
 
-Naming-wise, Tempo makes an analogy with clojure's atoms, so when you get the current value from a clock the function name is <i>subject</i>-deref,
+Naming-wise, Tempo makes an analogy with clojure's atoms, so functions to get the current value 
+from a clock are named <i>subject</i>-deref,
 for example `(t/date-deref clock)` or `(t/timezone-deref clock)`\n
 
 Create a Clock that is will return the current browser's time in the current timezone with 
@@ -120,13 +121,7 @@ Create a mutable, non-ticking clock - simply change the value in the atom as req
 `(def zdt-atom (atom (t/zdt-parse \"2024-02-22T00:00:00Z[Europe/London]\")))`
 `(def clock (t/clock-zdt-atom zdt-atom))`
 
-mutable, non-ticking clock - simply change the value in the atom as required
-
-`(def zdt-atom (atom (t/zdt-parse \"2024-02-22T00:00:00Z[Europe/London]\")))`
-
-`(def clock-zdt-atom (t/clock-zdt-atom zdt-atom))` 
-
-if you have other requirements for a clock, it is easy to create your own implementation like so
+If you have other requirements for a clock, it is easy to create your own implementation like so
 
 `(t/clock  (fn return-an-instant [])  (fn return-a-timezone []))`
 
@@ -155,10 +150,10 @@ move date forward 3 days
 `(t/>> (t/date-deref clock) 3 t/days-property)`
 
  move date to next-or-same tuesday
-`(t/date-next-or-same-weekday (t/date-deref clock) 2)`
+`(t/date-next-or-same-weekday (t/date-deref clock) t/weekday-tuesday)`
 
 move date to prev-or-same sunday
-`(t/date-prev-or-same-weekday (t/date-deref clock) 7)` 
+`(t/date-prev-or-same-weekday (t/date-deref clock) t/weekday-sunday)` 
 
 ;; set a particular field
 `(t/with (t/yearmonth-deref clock) 3030 t/years-property)`
@@ -200,14 +195,14 @@ Timezones in `tempo` are strings.
 Consider the following:
 
 
-`(let [start (t/date-parse \"2020-01-31\")] (-> start (t/>> 1 t/months-property) (t/<< 1 t/months-property)))`
+` (-> (t/date-parse \"2020-01-31\") (t/>> 1 t/months-property) (t/<< 1 t/months-property))`
 
 If you shift a date forward by an amount, then back by the same amount then one might think that the output would be equal to the
 input. In some cases that would happen, but not in the case shown above.
 
 Here's a similar example:
 
-`(let [start (t/date-parse \"2020-02-29\")] (-> start (t/with 2021 t/years-property) (t/with 2020 t/years-property)))`
+`(-> (t/date-parse \"2020-02-29\") (t/with 2021 t/years-property) (t/with 2020 t/years-property))`
 
 We increment the year, then decrement it, but the output is not the same as the input.
 
