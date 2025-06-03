@@ -29,7 +29,7 @@
     (util/watch (app-config)))
   (util/repl)
   :cljs/quit
-  (app-release )
+  (app-release)
   (util/build-report (app-config) "build-report.html")
 
   )

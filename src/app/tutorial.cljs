@@ -8,7 +8,7 @@
     
 To find out the rationale for this library and how to install it, visit the <a href=\"https://github.com/henryw374/tempo\">README</a>    
 
-This is an interactive tutorial for Tempo. Jump to a section using the left-side nav or see the <a href=\"/#/all\">Full listing</a> to search in page for anything in particular.
+This is an interactive tutorial for Tempo. Jump to a section using the left-side nav or see the <a href=\"#/all\">Full listing</a> to search in page for anything in particular.
  <span id=\"location-of-editor\">Here on the right</span>
 you have a **REPL**.
 Functions from the main tempo ns are included under the alias 't'
@@ -222,13 +222,29 @@ If you do not wish to have this guardrail, set `t/*block-non-commutative-operati
    "}
    {:title "Comparison" :content "
 
-Entities of the same type can be compared
+Entities of the same type can be compared like so.
 
 `(t/>= a b)`
 
 `(t/max a b c)`
 
 `(t/until a b t/minutes-property)`
+
+The following expression is false in JS runtimes by default:
+
+`(= (t/date-parse \"2020-02-02\") (t/date-parse \"2020-02-02\"))`
+
+The reason is that Tempo prioritises 'dead-code-elimination' - so in other words only the functions
+used from this library should be incorporated in your ':advanced' compiled build.
+
+If you want equality and hashing to work for all Temporal entities, run the following
+
+`(t/extend-all-cljs-protocols)`
+
+Having done so, the previous expression will evaluate to true.
+
+If your application only compares a subset of the Temporal entities, the protocol extension can just
+be applied to those individually. See the source of 't/extend-all-cljs-protocols' for details. 
 
 ```
    
