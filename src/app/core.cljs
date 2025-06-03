@@ -48,9 +48,8 @@
   (reitit/router
    [["/" {:name :index
           :view home/view}]
-    (when DEBUG
-      ["/all" {:name :all
-               :view all/view}])]))
+    ["/all" {:name :all
+             :view all/view}]]))
 
 (defn navigate! [new-match]
   (swap!

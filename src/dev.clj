@@ -22,9 +22,13 @@
         (dissoc :devtools))))
 
 (comment
-  
-  (util/watch (app-config))
-(util/repl)
+  (do
+    (util/stop-server)
+    (util/clean-shadow-cache)
+    (util/clean-dir "docs/public/js")
+    (util/watch (app-config)))
+  (util/repl)
+  :cljs/quit
   (app-release )
   (util/build-report (app-config) "build-report.html")
 

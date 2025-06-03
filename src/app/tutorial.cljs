@@ -4,11 +4,11 @@
   "Collection of map steps."
   [{:title "Introduction to Tempo"
     :content "Tempo is a zero-dependency Clojure(Script) API to <a href=\"https://docs.oracle.com/javase/tutorial/datetime/iso/overview.html\">java.time</a> 
-    on the JVM and <a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Temporal\">Temporal</a> on JS runtimes (like this browser)
+    on the JVM and <a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Temporal\">Temporal</a> on JS runtimes (such as this browser)
     
 To find out the rationale for this library and how to install it, visit the <a href=\"https://github.com/henryw374/tempo\">README</a>    
 
-This is an interactive tutorial for Tempo. Jump to a section using the left-side nav or see the <a href=\"/all\">Full listing</a> to search in page for anything in particular.
+This is an interactive tutorial for Tempo. Jump to a section using the left-side nav or see the <a href=\"/#/all\">Full listing</a> to search in page for anything in particular.
  <span id=\"location-of-editor\">Here on the right</span>
 you have a **REPL**.
 Functions from the main tempo ns are included under the alias 't'
@@ -46,11 +46,7 @@ Otherwise, the naming of entities in `Tempo` should mostly be self-explanatory.
 The naming of construction and access functions is based on mnemonics: The first word in the function is the entity name of the subject of the operation and
 the second word (after the hyphen) is the operation, so IOW <i>t/entity-operation</i>
 
-`(t/date-deref clock)`
-
 `(t/date-parse \"2020-02-02\")` ;iso strings only
-
-`(t/zdt-deref clock)`
 
 `(t/zdt-parse \"2024-02-22T00:00:00Z[Europe/London]\")` ;iso strings only
 
@@ -97,7 +93,7 @@ the target type. For example:
 `(t/legacydate->instant (js/Date.))`
     "}
    ;; Clocks
-   {:title "Clocks"
+   {:title "Clocks and 'Now'"
     :content
     "> Best practice for applications is to pass a Clock into any method that requires the current instant. 
 - from the Javadoc of java.time.InstantSource
@@ -105,8 +101,9 @@ the target type. For example:
 In both java.time and Temporal it is possible to use the ambient Clock by calling a zero-arity 'now' function, 
 for example `(js/Temporal.Now.instant)`, but this impedes testing and so has no equivalent in Tempo.
 
-Naming-wise, Tempo makes an analogy with clojure's atoms, so when you get the current value from a clock the function name is <i>subject</i>-deref
-    
+Naming-wise, Tempo makes an analogy with clojure's atoms, so when you get the current value from a clock the function name is <i>subject</i>-deref,
+for example `(t/date-deref clock)` or `(t/timezone-deref clock)`\n
+
 Create a Clock that is will return the current browser's time in the current timezone with 
   `(def clock (t/clock-system-default-zone))` or ...
   
@@ -117,13 +114,11 @@ A ticking clock in specified place
 `(def clock (t/clock-fixed (t/instant-parse \"2020-02-02T00:00:00Z\") \"Europe/Paris\"))`
 
 Offset existing clock by specified millis
-`(def clock (t/clock-offset clock -5))`
+`(def clock (t/clock-offset-millis clock -5))`
 
 Create a mutable, non-ticking clock - simply change the value in the atom as required
 `(def zdt-atom (atom (t/zdt-parse \"2024-02-22T00:00:00Z[Europe/London]\")))`
 `(def clock (t/clock-zdt-atom zdt-atom))`
-
-To use a clock, pass it to a '-deref' function. for example `(t/date-deref clock)`
 
 mutable, non-ticking clock - simply change the value in the atom as required
 
@@ -131,16 +126,16 @@ mutable, non-ticking clock - simply change the value in the atom as required
 
 `(def clock-zdt-atom (t/clock-zdt-atom zdt-atom))` 
 
-if you have other requirements for a clock, it is easy to create your own implementation
+if you have other requirements for a clock, it is easy to create your own implementation like so
 
-`(t/clock  (fn get-instant [] do-whatever)  (fn get-zone [] do-whatever))`
+`(t/clock  (fn return-an-instant [])  (fn return-a-timezone []))`
 
   "
     ;:test (constantly true)
     }
    {:title "Properties"
     :content "
-Vars such as `t/hours-property` exist in Tempo. These combine the concepts (from the underlying date APIs) of units and fields,
+Property vars such as `t/hours-property` combine the concepts (from the underlying platform APIs) of 'units' and 'fields',
 so for example
 
 `(t/until x y t/days-property)` ; how much time in unit days?
@@ -150,10 +145,6 @@ Combining the concept of unit and field is a simplification.
 
 In some cases it may be an over-simplification, for example `t/days-property` corresponds to the `day of month` field, 
 so if `day of year` was required a new property would have to be created in user space. 
-
-However, as per the stated aim of Tempo to just cover everyday use cases, 
-hopefully the property concept has sufficient benefit to outweigh the cost. 
-
     "}
    {:title "Manipulation" 
     :content "
@@ -162,10 +153,6 @@ Manipulation: aka construction a new temporal from one of the same type
 move date forward 3 days
 
 `(t/>> (t/date-deref clock) 3 t/days-property)`
-
-move forward by some amount
-
-`(t/>> a-date a-temporal-amount)`
 
  move date to next-or-same tuesday
 `(t/date-next-or-same-weekday (t/date-deref clock) 2)`
@@ -199,14 +186,14 @@ and if you need to know the number of a named day or month, a reverse lookup is 
    "}
    {:title "Time zones" :content "
 
+Timezones in `tempo` are strings.
+
 `(t/timezone-deref clock)`
 
-Timezone identifiers in `tempo` are just strings.
+`(t/zdt->timezone zdt)`
 
-(t/zdt->timezone zdt)
-(t/zdt-from {:datetime datetime :timezone timezone})
+`(t/zdt-from {:datetime datetime :timezone timezone})`
 
-   
    "}
    
    {:title "Guardrails" :content "
@@ -250,18 +237,11 @@ Entities of the same type can be compared
 `(t/date? x)`   
    "}
    {:title "Temporal-amounts" :content "
-   A temporal-amount is an entity representing a quantity of time, e.g. 3 hours and 5 seconds.
+   A temporal-amount is an entity representing a quantity of time, e.g. 3 hours and 5 seconds, or -6 months and 1 day.
 
-Temporal-Amount entities are represented differently in java.time vs Temporal, but with some overlap.
+'java.time' has 2 types to represent these: Period and Duration, whereas 'Temporal' has a single Duration entity. 
 
-An `alpha` ns (groan!) exists which contains a few functions for working with temporal-amounts.
-
-If not sufficient, use reader conditionals in your code to construct/manipulate as appropriate.
-
-`(require '[com.widdindustries.tempo.duration-alpha :as d])`
-
-`(d/duration-parse \"PT0.001S\")`
-
+Since these differences exist, there is no common Tempo API for these and it is recommended to use platform APIs directly, if the Tempo properties & manipulation functions do not suffice.
 
    "}
    {:title "Formatting" :content "

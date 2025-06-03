@@ -17,6 +17,8 @@
 
 (def ^:private clj-ns (sci/create-ns 'clojure.core nil))
 
+
+
 (def ^:private namespaces
   (let [ens (sci/create-ns 'com.widdindustries.tempo)
         publics (ns-publics 'com.widdindustries.tempo)
@@ -28,7 +30,7 @@
       'system-time (sci/copy-var system-time clj-ns)}}))
 
 ;; Default sci options
-(defonce init-opts {:classes {'js js/window :allow :all}
+(defonce init-opts {:classes    {'js js/window :allow :all}
                     :namespaces namespaces})
 
 ;; Sci context inside an atom

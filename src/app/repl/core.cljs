@@ -1,13 +1,13 @@
 (ns app.repl.core
   (:require
-   [clojure.string :as string]
-   [reagent.core :as r]
-   [app.sci :as sci]
-   [app.utils :as utils :refer [in?]]
-   [app.env :refer [debug DEBUG]]
-   [app.session :as session]
-   [app.tutorial :refer [tutorial]]
-   [app.repl.view :refer [repl-view]]
+    [clojure.string :as string]
+    [reagent.core :as r]
+    [app.sci :as sci]
+    [app.utils :as utils :refer [in?]]
+    [app.env :refer [debug DEBUG]]
+    [app.session :as session]
+    [app.tutorial :refer [tutorial]]
+    [app.repl.view :refer [repl-view]]
    [com.widdindustries.tempo]))
 
 ;; Collection of map with the REPL command history.
@@ -152,7 +152,7 @@
 
 ;; Add REPL functions like `doc`
 (sci/eval-string "(require '[clojure.repl :refer :all]
-                           '[com.widdindustries.tempo :as t])
+                           '[com.widdindustries.tempo :as t] )
                            (def clock (t/clock-system-default-zone))")
 
 ;; -------------------------
