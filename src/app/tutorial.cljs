@@ -103,7 +103,8 @@ for example `(js/Temporal.Now.instant)`, but this impedes testing so has no equi
 
 Naming-wise, Tempo makes an analogy with clojure's atoms, so functions to get the current value 
 from a clock are named <i>subject</i>-deref,
-for example `(t/date-deref clock)` or `(t/timezone-deref clock)`\n
+for example `(t/date-deref clock)` or `(t/timezone-deref clock)`
+
 
 Create a Clock that is will return the current browser's time in the current timezone with 
   `(def clock (t/clock-system-default-zone))` or ...
@@ -217,14 +218,6 @@ If you do not wish to have this guardrail, set `t/*block-non-commutative-operati
    "}
    {:title "Comparison" :content "
 
-Entities of the same type can be compared like so.
-
-`(t/>= a b)`
-
-`(t/max a b c)`
-
-`(t/until a b t/minutes-property)`
-
 The following expression is false in JS runtimes by default:
 
 `(= (t/date-parse \"2020-02-02\") (t/date-parse \"2020-02-02\"))`
@@ -234,12 +227,22 @@ used from this library should be incorporated in your ':advanced' compiled build
 
 If you want equality and hashing to work for all Temporal entities, run the following
 
-`(t/extend-all-cljs-protocols)`
+`(t/enable-comparison-for-all-temporal-entities)`
 
 Having done so, the previous expression will evaluate to true.
 
 If your application only compares a subset of the Temporal entities, the protocol extension can just
-be applied to those individually. See the source of 't/extend-all-cljs-protocols' for details. 
+be applied to those individually. See the source of 't/enable-comparison-for-all-temporal-entities' for details. 
+
+In addition to clojure's '=',  entities of the same type can be compared as follows.
+
+`(t/>= a b)`
+
+`(t/max a b c)`
+
+`(t/until a b t/minutes-property)`
+
+
 
 ```
    
